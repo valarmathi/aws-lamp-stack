@@ -6,6 +6,7 @@ resource "aws_vpc" "my-vpc" {
   tags = {
     App = var.stack
     Name = "Demo VPC"
+    Type = "Network"
   }
 }
 
@@ -19,6 +20,7 @@ resource "aws_subnet" "web-subnet-1" {
   tags = {
     App = var.stack
     Name = "Web-1a"
+    Type = "Web Subnet"
   }
 }
 
@@ -31,6 +33,7 @@ resource "aws_subnet" "web-subnet-2" {
   tags = {
     App = var.stack
     Name = "Web-2b"
+    Type = "Web Subnet"
   }
 }
 
@@ -44,6 +47,7 @@ resource "aws_subnet" "application-subnet-1" {
   tags = {
     App = var.stack
     Name = "Application-1a"
+    Type = "App Subnet"
   }
 }
 
@@ -56,6 +60,7 @@ resource "aws_subnet" "application-subnet-2" {
   tags = {
     App = var.stack
     Name = "Application-2b"
+    Type = "App Subnet"
   }
 }
 
@@ -68,6 +73,7 @@ resource "aws_subnet" "database-subnet-1" {
   tags = {
     App = var.stack
     Name = "Database-1a"
+    Type = "DB Subnet"
   }
 }
 
@@ -79,6 +85,7 @@ resource "aws_subnet" "database-subnet-2" {
   tags = {
     App = var.stack
     Name = "Database-2b"
+    Type = "DB Subnet"
   }
 }
 
@@ -90,6 +97,7 @@ resource "aws_subnet" "database-subnet" {
   tags = {
     App = var.stack
     Name = "Database"
+    Type = "DB Subnet"
   }
 }
 
@@ -100,6 +108,7 @@ resource "aws_internet_gateway" "igw" {
   tags = {
     App = var.stack
     Name = "Demo IGW"
+    Type = "Gateway"
   }
 }
 
@@ -116,6 +125,7 @@ resource "aws_route_table" "web-rt" {
   tags = {
     App = var.stack
     Name = "WebRT"
+    Type = "Route Table"
   }
 }
 
@@ -149,6 +159,7 @@ EOF
   tags = {
     App = var.stack
     Name = "Web Server"
+    Type = "Server"
   }
 
 }
@@ -171,6 +182,7 @@ EOF
   tags = {
     App = var.stack
     Name = "Web Server"
+    Type = "Server"
   }
 
 }
@@ -199,6 +211,7 @@ resource "aws_security_group" "web-sg" {
   tags = {
     App = var.stack
     Name = "Web-SG"
+    Type = "Web Security Group"
   }
 }
 
@@ -226,6 +239,7 @@ resource "aws_security_group" "webserver-sg" {
   tags = {
     App = var.stack
     Name = "Webserver-SG"
+    Type = "App Security Group"
   }
 }
 
@@ -253,6 +267,7 @@ resource "aws_security_group" "database-sg" {
   tags = {
     App = var.stack
     Name = "Database-SG"
+    Type = "DB Security Group"
   }
 }
 
@@ -262,6 +277,12 @@ resource "aws_lb" "external-elb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.web-sg.id]
   subnets            = [aws_subnet.web-subnet-1.id, aws_subnet.web-subnet-2.id]
+  
+  tags = {
+    App = var.stack
+    Name = "External-LB"
+    Type = "Load Balancer"
+  }
 }
 
 resource "aws_lb_target_group" "external-elb" {
@@ -269,6 +290,12 @@ resource "aws_lb_target_group" "external-elb" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.my-vpc.id
+  
+  tags = {
+    App = var.stack
+    Name = "External-LB-Target-Group"
+    Type = "Load Balancer"
+  }
 }
 
 resource "aws_lb_target_group_attachment" "external-elb1" {
@@ -314,6 +341,12 @@ resource "aws_db_instance" "default" {
   password               = "password"
   skip_final_snapshot    = true
   vpc_security_group_ids = [aws_security_group.database-sg.id]
+  
+  tags = {
+    App = var.stack
+    Name = "mysql_db"
+    Type = "Database"
+  }
 }
 
 resource "aws_db_subnet_group" "default" {
